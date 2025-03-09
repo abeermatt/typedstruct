@@ -137,6 +137,8 @@ defmodule TypedStruct do
         Module.register_attribute(__MODULE__, attr, accumulate: true)
       end)
 
+      Module.put_attribute(__MODULE__, :def_impl, &defstruct/1)
+
       Module.put_attribute(__MODULE__, :ts_enforce?, unquote(!!opts[:enforce]))
       @before_compile {unquote(__MODULE__), :__plugin_callbacks__}
 
@@ -144,7 +146,7 @@ defmodule TypedStruct do
       unquote(block)
 
       @enforce_keys @ts_enforce_keys
-      defstruct @ts_fields
+      @def_impl.(@ts_fields)
 
       TypedStruct.__struct_type__(@ts_types, unquote(opts))
     end

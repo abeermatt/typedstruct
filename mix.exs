@@ -6,9 +6,10 @@ defmodule TypedStruct.MixProject do
 
   def project do
     version = vsn()
+
     [
       app: :typedstruct,
-      version: version,
+      version: @version,
       elixir: "~> 1.13",
       start_permanent: false,
       deps: deps(),
@@ -125,6 +126,7 @@ defmodule TypedStruct.MixProject do
   # `git describe --tags` returns the proper version number.
   defp vsn() do
     hex_spec = Mix.Project.deps_path() |> Path.dirname() |> Path.join(".hex")
+
     if File.exists?(hex_spec) do
       hex_spec
       |> File.read!()
@@ -133,15 +135,16 @@ defmodule TypedStruct.MixProject do
       |> Map.get(:version)
     else
       with {ver, 0} <-
-            System.cmd("git", ~w(describe --always --tags),
-              stderr_to_stdout: true
-            ) do
+             System.cmd("git", ~w(describe --always --tags),
+               stderr_to_stdout: true
+             ) do
         ver
         |> String.trim()
         |> String.replace(~r/^v/, "")
-      else _ ->
-        #raise "Cannot determine application version!"
-        @version
+      else
+        _ ->
+          # raise "Cannot determine application version!"
+          @version
       end
     end
   end
